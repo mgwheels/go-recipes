@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -12,6 +13,25 @@ import (
 var recipes []models.Recipe
 
 func GetAllRecipes(c *gin.Context) {
+	// Check if user provided ingredient query arg
+	ingredients := c.QueryArray("ingredient")
+
+	// Handle potential recipe filter by ingredient
+	if len(ingredients) > 0 {
+		var filtered []models.Recipe
+		for _, r := range recipes {
+			for _, ing := range r.Ingredients {
+				if slices.Contains(ingredients, ing.Name) {
+					filtered = append(filtered, r)
+					break
+				}
+			}
+		}
+		c.JSON(200, filtered)
+		return
+	}
+
+	// Else, return all recipes
 	c.JSON(200, recipes)
 }
 
