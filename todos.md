@@ -23,7 +23,7 @@ Things I want to add. Jotting them down here so I can prioritize what to add.
 
 **Learning Exercise**
 - [ ] Recreate with manual routing (replace Gin with `net/http` or `httprouter`)
-- [ ] Try implement go profiling to review resource utilization
+- [ ] Try profiling with go pprof ([how-to blog](https://fulmenflux.co/blog/go/complete-guide-to-profile-golang-services-in-production/))
 
 **Testing**
 - [ ] Unit test functions
