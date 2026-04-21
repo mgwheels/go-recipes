@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go-recipes/internal/models"
 )
 
@@ -25,7 +28,7 @@ func GetRecipe(c *gin.Context) {
 	}
 
 	// Recipe not found in recipe store, return err
-	c.JSON(404, gin.H{"error": "recipe not found"})
+	c.JSON(404, gin.H{"error": fmt.Sprintf("recipe not found for id: %s", id)})
 }
 
 func CreateRecipe(c *gin.Context) {
@@ -36,6 +39,13 @@ func CreateRecipe(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Generate new ID for recipe
+	recipeId, err := uuid.NewV7()
+	if err != nil {
+		c.JSON(500, gin.H{"error": fmt.Sprintf("error generating uuid: %s", err)})
+	}
+	newRecipe.Id = recipeId.String()
 
 	recipes = append(recipes, newRecipe)
 	c.JSON(201, newRecipe)
@@ -63,7 +73,7 @@ func UpdateRecipe(c *gin.Context) {
 	}
 
 	// Else, return 404 recipe not found
-	c.JSON(404, gin.H{"error": "recipe not found"})
+	c.JSON(404, gin.H{"error": fmt.Sprintf("recipe not found for id: %s", id)})
 }
 
 func DeleteRecipe(c *gin.Context) {
@@ -80,5 +90,5 @@ func DeleteRecipe(c *gin.Context) {
 	}
 
 	// Else, return 404 recipe not found
-	c.JSON(404, gin.H{"error": "recipe not found"})
+	c.JSON(404, gin.H{"error": fmt.Sprintf("recipe not found for id: %s", id)})
 }
