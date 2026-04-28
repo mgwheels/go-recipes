@@ -2,37 +2,27 @@ package handlers
 
 import (
 	"fmt"
-	"slices"
+
+	"go-recipes/internal/models"
+	"go-recipes/internal/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"go-recipes/internal/models"
 )
 
 // Local recipe store
 var recipes []models.Recipe
 
 func GetAllRecipes(c *gin.Context) {
-	// Check if user provided ingredient query arg
+	var recipeResponse []models.Recipe
+
+	// Get query params and filter recipes
 	ingredients := c.QueryArray("ingredient")
+	name := c.Query("name")
+	utils.FilterRecipes(&recipes, &recipeResponse, ingredients, name)
 
-	// Handle potential recipe filter by ingredient
-	if len(ingredients) > 0 {
-		var filtered []models.Recipe
-		for _, r := range recipes {
-			for _, ing := range r.Ingredients {
-				if slices.Contains(ingredients, ing.Name) {
-					filtered = append(filtered, r)
-					break
-				}
-			}
-		}
-		c.JSON(200, filtered)
-		return
-	}
-
-	// Else, return all recipes
-	c.JSON(200, recipes)
+	c.JSON(200, recipeResponse)
+	// c.JSON(200, recipes)
 }
 
 func GetRecipe(c *gin.Context) {
